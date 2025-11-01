@@ -1,0 +1,80 @@
+# Dependencies
+node_modules/
+vendor/
+Pods/
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+.env.local
+
+# Build outputs
+dist/
+build/
+DerivedData/
+*.exe
+
+# iOS specific
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Xcode specific
+**.xcworkspace/
+**.xcodeproj/
+xcuserdata/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xcuserstate
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+.swiftpm/
+*.xcodeproj/
+
+# AppCode specific
+.idea/
+**/workspace.xml
+**/tasks.xml
+
+# Other IDEs
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# macOS system files
+__MACOSX/
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# Logs
+*.log
+logs/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Code coverage
+*.gcda
+*.gcno
+*.profdata
+
+
+# app/

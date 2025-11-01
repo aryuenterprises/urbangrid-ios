@@ -1,0 +1,4 @@
+D:/Joel/Academy/android/app/.cxx/Debug/5pn2a695/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+D:/Joel/Academy/android/app/.cxx/Debug/5pn2a695/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
+D:/Joel/Academy/android/app/.cxx/Debug/5pn2a695/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+D:/Joel/Academy/android/app/.cxx/Debug/5pn2a695/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir
