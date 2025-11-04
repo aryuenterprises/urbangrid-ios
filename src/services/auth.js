@@ -79,21 +79,13 @@ export const Signup = async (username, email, ph_no, user_type, password) => {
 // 2. LOGIN
 export const login = async (username, password) => {
   try {
-    store.dispatch(setLoading(true)); 
+    store.dispatch(setLoading(true));
     const response = await axios.post(`${API_BASE_URL}/api/login`, { username, password });
-    if (!response.data.token) {
-      return response.data;
-    }
     const { token } = response.data;
     storeAuthToken(token);
     const decodedUser = jwtDecode(token);
-    // Dispatch to Redux
     store.dispatch(setAuthData({ token, user: decodedUser }));
-    if (decodedUser.user_type === 'student' && decodedUser.student_id) {
-      const profile = await getStudentProfile(decodedUser.student_id);
-      store.dispatch(setStudentProfile(profile));
-      store.dispatch(setGlobalCourseId(null));
-    }
+
     return {
       success: true,
       token,
@@ -102,7 +94,6 @@ export const login = async (username, password) => {
     };
   } catch (error) {
     // store.dispatch(setError("login error", error.response?.data || error.message));
-    console.log('Login error:', error.message);
     throw error.response?.data || error.message || 'Login failed';
   } finally {
     store.dispatch(setLoading(false)); // Reset loading state
@@ -258,7 +249,6 @@ export const getStudentProfile = async (studentId) => {
     store.dispatch(setStudentProfile(profileData));
     return profileData;
   } catch (error) {
-    console.log('Error fetching student profile:', error.response);
     throw error;
   }
 };
@@ -272,7 +262,6 @@ export const UpdateProfilePic = async (studentId, image) => {
       ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' :
         'image/*';
     const formData = new FormData();
-    console.log("image", image)
     formData.append('profile_pic', {
       uri: image,
       name: fileName,
@@ -397,7 +386,6 @@ export const getSettings = async () => {
     store.dispatch(setSettings(settings));
     return settings;
   } catch (error) {
-    console.log('Error fetching student profile:', error.response);
     throw error;
   }
 };

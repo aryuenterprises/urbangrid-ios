@@ -124,6 +124,7 @@ const ThemedAppContent = () => {
   const isOnline = useNetworkStatus();
   const { settings } = useSelector(state => state.auth);
 
+
   useEffect(() => {
     async function initializeApp() {
       try {
@@ -144,7 +145,11 @@ const ThemedAppContent = () => {
 
         await getSettings();
       } catch (error) {
-        console.log('Initialization error:', error);
+        Toast.show({
+          type: 'error',
+          text1: 'Authentication Required',
+          text2: 'Please log in to continue'
+        });
       } finally {
         setLoading(false);
       }
@@ -270,6 +275,7 @@ const ThemedAppContent = () => {
 
 // Main App Component with Providers
 const App = () => {
+
   return (
     <Provider store={store}>
       <ThemedAppWrapper />

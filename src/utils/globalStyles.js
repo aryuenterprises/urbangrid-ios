@@ -24,7 +24,7 @@ export const globalstyles = StyleSheet.create({
         fontSize: moderateScale(24),
         fontFamily: 'Manrope-Bold',
         marginBottom: hp("1%"),
-        color: '#333',
+        color: '#fff',
     },
     subheader: {
         fontSize: moderateScale(15),
@@ -40,13 +40,15 @@ export const globalstyles = StyleSheet.create({
         lineHeight: moderateScale(22),
     },
     input: {
-        height: hp("6%"),
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        color: '#fff',
         borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 100,
+        borderColor: 'rgba(255, 255, 255, 0.3)',
+        overflow: "hidden",
+        height: hp("6%"),
+        borderRadius: hp("1%"),
         paddingHorizontal: hp("1.5%"),
-        marginBottom: hp("3%"),
-        color: "#000",
+        // marginBottom: hp("3%"),
         fontSize: moderateScale(16),
         fontFamily: 'Manrope-Regular',
     },
@@ -137,15 +139,22 @@ export const globalstyles = StyleSheet.create({
         fontSize: moderateScale(28),
         fontFamily: 'Manrope-Bold',
         color: '#ffffff',
-        marginTop: hp('2%'),
+        // marginTop: hp('2%'),
         letterSpacing: 0.5,
+    },
+    subtitle: {
+        fontSize: moderateScale(16),
+        fontFamily: 'Manrope-Regular',
+        color: 'rgba(255,255,255,0.8)',
+        marginTop: hp('1%'),
+        textAlign: 'center'
     },
     formWrapper: {
         marginHorizontal: wp('8%'),
         marginTop: hp('2%'),
     },
     inputWrapper: {
-        marginBottom: hp('1.5%'),
+        marginBottom: hp('2%'),
     },
     inputLabel: {
         color: 'rgba(255,255,255,0.9)',
@@ -225,7 +234,7 @@ export const globalstyles = StyleSheet.create({
     sectionTitle: {
         fontSize: moderateScale(18),
         fontFamily: 'Manrope-Bold',
-        color: '#333'
+        color: '#ccc'
     },
     seeAllText: {
         fontSize: moderateScale(14),
@@ -330,6 +339,25 @@ export const globalstyles = StyleSheet.create({
         height: hp("15%"),
         borderRadius: 10
     },
+    backButton: {
+        alignItems: 'center',
+        padding: hp("1%"),
+    },
+    backButtonText: {
+        color: '#007AFF',
+        fontSize: moderateScale(16),
+    },
+    buttonDisabled: {
+        backgroundColor: '#ccc',
+    },
+    formContainer: {
+        width: '100%',
+        // alignItems: 'center',
+    },
+    authHeader: {
+        alignItems: 'center',
+        marginBottom: hp("2%"),
+    }
 });
 
 // Optional: Export design tokens (colors, spacing)

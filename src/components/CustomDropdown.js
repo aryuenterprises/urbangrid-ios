@@ -23,8 +23,7 @@ const CustomDropdown = ({
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(defaultValue || selectedCourse);
   const [dropDownItems, setDropDownItems] = useState(items);
-  console.log("style", style);
-  // Update value when selectedCourse prop changes
+  
   useEffect(() => {
     if (selectedCourse) {
       setValue(selectedCourse.course);

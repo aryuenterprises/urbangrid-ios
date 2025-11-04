@@ -60,11 +60,9 @@ const AttendanceScreen = ({ route }) => {
 
   const fetchAttendanceData = async () => {
     try {
-      console.log("object", user.student_id)
       setRefreshing(true);
       const logsResponse = await api.get(`/api/attendance/${user.student_id}/status`);
       const allLogsData = logsResponse.data.logs || [];
-      console.log("object", logsResponse)
       setSessions(allLogsData);
       setStats({
         totalDays: logsResponse.data.total_classes,
