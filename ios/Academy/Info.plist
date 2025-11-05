@@ -36,7 +36,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>
@@ -81,7 +81,7 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to your photos to let you choose profile pictures and share images.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-<string>This app needs access to save photos to your library</string>
+	<string>This app needs access to save photos to your library</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
