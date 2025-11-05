@@ -285,6 +285,7 @@ export const getDashboard = async () => {
 export const getCourses = async (id) => {
   try {
     const response = await api.get(`${API_BASE_URL}/api/student_profile/${id}/courses`);
+    console.log("API_BASE_URLt", response)
     return response.data;
   } catch (error) {
     throw error;
