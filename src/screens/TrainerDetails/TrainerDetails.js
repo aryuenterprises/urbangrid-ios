@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
@@ -9,27 +9,33 @@ import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
 import { useScrollDetection } from '../../hook/useScrollDetection';
 import { useAppTheme } from '../../hook/useAppTheme';
 import Toast from 'react-native-toast-message';
+import { getStudentProfile } from '../../services/auth';
 
 const TrainerDetails = ({ route }) => {
-    const { batch } = route.params || {};
+    // const { batch } = route.params || {};
     const { user } = useSelector(state => state.auth);
     const { handleScroll, createAnimatedScrollView } = useScrollDetection();
     const AnimatedFlatList = createAnimatedScrollView(FlatList);
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
     const { colors: themeColors } = useAppTheme();
+    const [data, setData] = useState({});
+
     const onRefresh = useCallback(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        fetchData()
+    }, [])
 
     const fetchData = async () => {
         try {
             setRefreshing(true);
             setLoading(true);
-
-            // Artificial delay of 1 second
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
+            const profile = await getStudentProfile(user?.student_id);
+            console.log("getStudentProfile", profile.data.batch)
+            setData(profile.data.batch);
         } catch (error) {
             Toast.show({
                 type: 'error',
@@ -42,14 +48,20 @@ const TrainerDetails = ({ route }) => {
         }
     };
 
-    if (!Array.isArray(batch) || batch.length === 0) {
-        return (
-            <View style={[styles.noDataContainer, { backgroundColor: themeColors.background }]}>
-                <Icon name="information-outline" size={hp('4%')} color={themeColors.error} />
-                <Text style={[styles.noDataText, { color: themeColors.textPrimary }]}>No trainer available</Text>
-            </View>
-        );
+    if (loading) {
+        <View style={styles.centerContainer}>
+            <ActivityIndicator size="large" color={themeColors.primary} />
+        </View>
     }
+
+    // if (!Array.isArray(data) || data.length === 0) {
+    //     return (
+    //         <View style={[styles.noDataContainer, { backgroundColor: themeColors.background }]}>
+    //             <Icon name="information-outline" size={hp('4%')} color={themeColors.error} />
+    //             <Text style={[styles.noDataText, { color: themeColors.textPrimary }]}>No trainer available</Text>
+    //         </View>
+    //     );
+    // }
 
     const renderBatchItem = ({ item }) => (
         <View style={[styles.batchCard, { backgroundColor: themeColors.card }]}>
@@ -119,7 +131,7 @@ const TrainerDetails = ({ route }) => {
             contentContainerStyle={[styles.contentContainer, { backgroundColor: themeColors.background }]}
             onScroll={handleScroll}
             scrollEventThrottle={16}
-            data={batch}
+            data={data}
             refreshControl={
                 <RefreshControl
                     refreshing={refreshing}
@@ -131,15 +143,15 @@ const TrainerDetails = ({ route }) => {
             }
             renderItem={renderBatchItem}
             keyExtractor={(item, index) => `batch-${item.batch_id}-${index}`}
-            ListEmptyComponent={
-                loading ? (
-                    <View style={styles.centerContainer}>
-                        <ActivityIndicator size="large" color={themeColors.primary} />
-                    </View>
-                ) : (
-                    <Text style={[styles.emptyText, { color: themeColors.textPrimary }]}>No assessments available</Text>
-                )
-            }
+        // ListEmptyComponent={
+        //     loading ? (
+        //         <View style={styles.centerContainer}>
+        //             <ActivityIndicator size="large" color={themeColors.primary} />
+        //         </View>
+        //     ) : (
+        //         <Text style={[styles.emptyText, { color: themeColors.textPrimary }]}>No assessments available</Text>
+        //     )
+        // }
         />
     );
 };
