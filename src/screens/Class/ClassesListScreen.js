@@ -15,7 +15,8 @@ import api from '../../services/api';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-import { API_BASE_URL } from '@env'
+import { API_BASE_URL } from '@env';
+import { isWithinInterval, addMinutes, parseISO, isValid, parse } from 'date-fns';
 const getCurrentDate = () => {
   return moment().format('YYYY-MM-DD');
 };
@@ -230,6 +231,54 @@ const ClassesListScreen = ({ navigation }) => {
     return Linking.openURL(meetUrl);
   };
 
+  const parseTimeString = (timeString, referenceDate = new Date()) => {
+    if (!timeString) return null;
+
+    try {
+      // Parse time string like "06:25 PM"
+      const parsedTime = parse(timeString, 'hh:mm a', referenceDate);
+
+      if (!isValid(parsedTime)) {
+        console.warn('Invalid time format:', timeString);
+        return null;
+      }
+
+      // Combine with current date but keep the parsed time
+      const combinedDate = new Date(referenceDate);
+      combinedDate.setHours(parsedTime.getHours());
+      combinedDate.setMinutes(parsedTime.getMinutes());
+      combinedDate.setSeconds(0);
+      combinedDate.setMilliseconds(0);
+
+      return combinedDate;
+    } catch (error) {
+      console.warn('Error parsing time:', timeString, error);
+      return null;
+    }
+  };
+
+  const canJoinMeeting = (classItem) => {
+    if (!classItem?.start_time) {
+      console.log('No start_time provided');
+      return false;
+    }
+
+    const startTime = parseTimeString(classItem.start_time);
+    if (!startTime) {
+      console.log('Failed to parse start time:', classItem.start_time);
+      return false;
+    }
+
+    const now = new Date();
+    const joinWindowStart = addMinutes(startTime, -20);
+    const canJoin = isWithinInterval(now, {
+      start: joinWindowStart,
+      end: startTime
+    });
+
+    return canJoin;
+  };
+
   const handleJoinMeet = useCallback(async (item) => {
     if (!item?.class_link || item.class_link === "NA" || item.class_link === "join meeting") {
       alert("No meeting link available");
@@ -315,16 +364,23 @@ const ClassesListScreen = ({ navigation }) => {
           Time: {formatTime(item.start_time)} - {formatTime(item.end_time)}
         </Text>
 
-        {item.status === "ongoing" ? item.class_link ? (
+        {(item.status === "ongoing" || canJoinMeeting(item)) ? item.class_link ? (
           <View style={styles.cardActions}>
             <Button
               mode="contained"
               onPress={() => handleJoinMeet(item)}
-              style={[styles.button, { backgroundColor: themeColors.primary }]}
+              style={[
+                styles.button,
+                {
+                  backgroundColor: canJoinMeeting(item)
+                    ? themeColors.primary
+                    : themeColors.disabled
+                }
+              ]}
               labelStyle={globalstyles.buttonText}
-              disabled={item.status !== "ongoing"}
+              disabled={!canJoinMeeting(item)}
             >
-              Join
+              {canJoinMeeting(item) ? "Join" : "Join Available Soon"}
             </Button>
           </View>
         ) : (

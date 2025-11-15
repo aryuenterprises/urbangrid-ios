@@ -216,11 +216,9 @@ const StudentDashboard = () => {
                 </TouchableOpacity>
               </View>
             </View>
-
-            {/* Announcements Carousel Banner */}
             {data?.announcements?.length > 0 ? (
               <>
-                <View style={globalstyles.sectionHeader}>
+                <View style={[globalstyles.sectionHeader, {marginTop: 0}]}>
                   <Text style={[globalstyles.sectionTitle, { color: themeColors.textPrimary }]}>Announcements</Text>
                 </View>
                 <View style={styles.announcementContainer}>
