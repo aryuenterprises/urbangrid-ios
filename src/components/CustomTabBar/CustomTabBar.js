@@ -11,10 +11,8 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
     const { colors: themeColors, isDark } = useAppTheme();
     const isFooterVisible = useSelector((state) => state.footer.isVisible);
     const translateY = useRef(new Animated.Value(0)).current;
-    // Use a ref to store animations dynamically
     const scaleAnimations = useRef({}).current;
     const insets = useSafeAreaInsets();
-    // Function to get or create animation value
     const getScaleAnimation = (index) => {
         if (!scaleAnimations[index]) {
             scaleAnimations[index] = new Animated.Value(1);
@@ -146,6 +144,9 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
                         break;
                     case 'Chat':
                         iconName = 'chat';
+                        break;
+                    case 'Schedule':
+                        iconName = 'calendar-plus';
                         break;
                     default:
                         iconName = 'circle';

@@ -157,7 +157,6 @@ const ThemedAppContent = () => {
     initializeApp();
   }, []);
 
-
   useEffect(() => {
     // Set global status bar style based on theme
     StatusBar.setBarStyle(
@@ -189,7 +188,6 @@ const ThemedAppContent = () => {
     });
   };
 
-  // Show splash screen until all conditions are met
   if (loading || !isAnimationFinished || isFirstLaunch === null) {
     return (
       <View style={[

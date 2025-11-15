@@ -26,12 +26,10 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// Response interceptor: Handle 401 by logging out
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
         if (error.response?.status === 401) {
-            // Clear token and navigate to login
             removeAuthToken();
             navigationRef.navigate('AuthStack', { screen: 'Login' });
         }

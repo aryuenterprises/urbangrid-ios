@@ -28,26 +28,23 @@ import PaymentProgress from '../screens/PaymentProgress/PaymentProgress';
 import ChatScreen from '../screens/Chat/ChatScreen';
 import UsersListScreen from '../screens/Chat/UsersListScreen';
 import TrainerList from '../screens/Chat/TrainerList';
+import ScheduleClassScreen from '../screens/ScheduleClass/ScheduleClassScreen';
 import { Platform, TouchableOpacity } from 'react-native';
 import { hp, moderateScale, wp } from '../utils/responsive';
 import { useAppTheme } from '../hook/useAppTheme';
 import { useSelector } from 'react-redux';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
-// Create a navigation reference
 export const navigationRef = React.createRef();
-// Unified header options for consistent styling
+
 const getHeaderOptions = (navigation, title, showBackButton = false, themeColors) => ({
   headerShown: true,
   title: title,
   headerTitleAlign: 'center',
   headerLeft: () => {
-      const navigation = useNavigation()
-
     if (showBackButton) {
       return (
         <TouchableOpacity
@@ -65,7 +62,7 @@ const getHeaderOptions = (navigation, title, showBackButton = false, themeColors
         </TouchableOpacity>
       );
     }
-    
+
     return (
       <TouchableOpacity
         onPress={() => navigation.toggleDrawer()}
@@ -90,7 +87,7 @@ const getHeaderOptions = (navigation, title, showBackButton = false, themeColors
     borderBottomColor: '#e0e0e0',
   },
   headerTitleContainerStyle: {
-    padding: 0, // Remove container padding
+    padding: 0,
     margin: 0,
   },
   headerLeftContainerStyle: {
@@ -111,11 +108,9 @@ const getHeaderOptions = (navigation, title, showBackButton = false, themeColors
   }
 });
 
-
-// Main Drawer Navigator that wraps everything
 const MainDrawerNavigator = () => {
   const { colors: themeColors } = useAppTheme();
-  const frame = useSafeAreaFrame();
+
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -162,17 +157,16 @@ const MainDrawerNavigator = () => {
         component={PaymentProgress}
         options={({ navigation }) => getHeaderOptions(navigation, 'Payment Progress', true, themeColors)}
       />
-      <Stack.Screen
+      <Drawer.Screen
         name="AttendanceDetailScreen"
         component={AttendanceDetailScreen}
         options={({ navigation }) => getHeaderOptions(navigation, 'Attendance Details', true, themeColors)}
       />
-
     </Drawer.Navigator>
   );
 };
 
-// Class Stack
+// Class Stack for Students
 const ClassStack = () => {
   const { colors: themeColors } = useAppTheme();
 
@@ -192,7 +186,22 @@ const ClassStack = () => {
   );
 }
 
-// Course Stack
+// Schedule Stack for Tutors
+const ScheduleStack = () => {
+  const { colors: themeColors } = useAppTheme();
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name="ScheduleClass"
+        component={ScheduleClassScreen}
+        options={({ navigation }) => getHeaderOptions(navigation, 'Schedule Class', false, themeColors)}
+      />
+      {/* You can add more schedule-related screens here if needed */}
+    </Stack.Navigator>
+  );
+}
+
 // Course Stack
 const CourseStack = () => {
   const { colors: themeColors } = useAppTheme();
@@ -233,6 +242,7 @@ const CourseStack = () => {
     </Stack.Navigator>
   );
 }
+
 // Dashboard Stack
 const DashboardStack = () => {
   const { colors: themeColors } = useAppTheme();
@@ -269,7 +279,6 @@ const AttendanceStack = () => {
 // Chat Stack
 const ChatStack = () => {
   const { colors: themeColors } = useAppTheme();
-
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -289,11 +298,18 @@ const ChatStack = () => {
     </Stack.Navigator>
   );
 }
+
 // Main App Tabs
 const AppTabs = () => {
   const { colors: themeColors } = useAppTheme();
-  const { settings } = useSelector(state => state.auth);
+  const { settings, user } = useSelector(state => state.auth);
   const showAttendanceTab = settings?.data?.attendance_options !== 'automatic_attendance';
+  if (!user) {
+    return null; // or a loading screen
+  }
+  const isTutor = user?.user_type === "tutor";
+  const isStudent = user?.user_type === "student";
+
   return (
     <Tab.Navigator
       tabBar={(props) => <CustomTabBar {...props} theme={themeColors} />}
@@ -314,16 +330,36 @@ const AppTabs = () => {
           )
         }}
       />
-      <Tab.Screen
-        name="Classes"
-        component={ClassStack}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="book" color={color} size={size} />
-          )
-        }}
-      />
-      {showAttendanceTab &&
+
+      {user && (
+        <>
+          {isTutor ? (
+            <Tab.Screen
+              name="Schedule"
+              component={ScheduleStack}
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <Icon name="calendar-plus" color={color} size={size} />
+                ),
+                tabBarLabel: 'Schedule'
+              }}
+            />
+          ) : (
+            <Tab.Screen
+              name="Classes"
+              component={ClassStack}
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <Icon name="book" color={color} size={size} />
+                ),
+                tabBarLabel: 'Classes'
+              }}
+            />
+          )}
+        </>
+      )}
+
+      {showAttendanceTab && (
         <Tab.Screen
           name="Attendance"
           component={AttendanceStack}
@@ -333,7 +369,8 @@ const AppTabs = () => {
             )
           }}
         />
-      }
+      )}
+
       <Tab.Screen
         name="Course"
         component={CourseStack}
@@ -348,7 +385,7 @@ const AppTabs = () => {
         component={ChatStack}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="discussion" color={color} size={size} />
+            <Icon name="message-text" color={color} size={size} />
           )
         }}
       />

@@ -25,11 +25,13 @@ import { hp, moderateScale } from '../../utils/responsive';
 import { TextInput, Button } from 'react-native-paper';
 import GradientButton from '../../components/GradientButton/gradientButton';
 import { smartPreload } from '../../utils/smartPreload';
+import { API_BASE_URL } from '@env'
 
 const VerifyOTPScreen = ({ route, navigation }) => {
     const { email } = route.params;
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const inputs = useRef([]);
     const { fadeAnim, logoPosition } = useAuthAnimations();
 
@@ -70,14 +72,15 @@ const VerifyOTPScreen = ({ route, navigation }) => {
             return;
         }
 
-        setLoading(true);
+        setSubmitting(true);
         try {
+            console.log("fullOtp", fullOtp)
             const response = await axios.post(`${API_BASE_URL}/api/verify-otp/`, {
                 email: email,
                 otp: fullOtp,
             });
-
-            if (response.status === 200) {
+            console.log("response", response)
+            if (response.status) {
                 smartPreload('ResetPasswordScreen')
                 navigation.navigate('ResetPasswordScreen', { email: email });
             }
@@ -87,23 +90,26 @@ const VerifyOTPScreen = ({ route, navigation }) => {
                 text1: 'Error',
                 text2: error.response?.data?.message || 'Invalid OTP. Please try again.'
             });
+            console.log("error", error)
         } finally {
-            setLoading(false);
-            smartPreload('ResetPasswordScreen')
-            navigation.navigate('ResetPasswordScreen', { email: email });
+            setSubmitting(false);
         }
     };
 
     const resendOTP = async () => {
         setLoading(true);
         try {
-            const response = await axios.post(`${API_BASE_URL}/api/forgot-password`, {
+            const response = await axios.post(`${API_BASE_URL}/api/resend-otp/`, {
                 email: email,
             });
-
             if (response.status === 200) {
                 setOtp(['', '', '', '', '', '']);
                 inputs.current[0].focus();
+                Toast.show({
+                    type: 'success',
+                    text1: 'Success',
+                    text2: response.message || 'OTP Resend Successfully'
+                });
             }
         } catch (error) {
             Toast.show({
@@ -136,7 +142,7 @@ const VerifyOTPScreen = ({ route, navigation }) => {
                                 value={digit}
                                 onChangeText={text => handleOtpChange(text, index)}
                                 onKeyPress={e => handleKeyPress(e, index)}
-                                keyboardType="number-pad"
+                                // keyboardType=""
                                 maxLength={1}
                                 textColor='#fff'
                                 selectTextOnFocus
@@ -146,9 +152,9 @@ const VerifyOTPScreen = ({ route, navigation }) => {
 
                     <GradientButton
                         colors={['#BA000C', '#5E000B']}
-                        text={loading ? 'Verifying...' : 'Verify OTP'}
+                        text={submitting ? 'Verifying...' : 'Verify OTP'}
                         onPress={handleVerifyOTP}
-                        style={[{ width: "100%" }, loading && globalstyles.buttonDisabled]}
+                        style={[{ width: "100%" }, submitting && globalstyles.buttonDisabled]}
                     />
 
                     <TouchableOpacity

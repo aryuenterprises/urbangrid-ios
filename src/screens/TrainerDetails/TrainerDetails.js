@@ -41,11 +41,9 @@ const TrainerDetails = ({ route }) => {
                     batch.course_trainer_assignments.filter((assignment) => assignment.student_id === user.student_id)
                 );
 
-                // 2. Extract unique courses (not trainers, since they're all the same)
                 const uniqueCourses = Array.from(
                     new Map(
                         userAssignments.map((assignment) => {
-                            // Find the batch that contains this assignment
                             const batch = profile?.data?.batch.find((b) =>
                                 b.course_trainer_assignments.some(
                                     (cta) => cta.course_id === assignment.course_id && cta.student_id === assignment.student_id
@@ -53,14 +51,14 @@ const TrainerDetails = ({ route }) => {
                             );
 
                             return [
-                                assignment.course_id, // Use course_id as the unique key
+                                assignment.course_id,
                                 {
                                     course_name: assignment.course_name,
                                     course_id: assignment.course_id,
                                     trainer_name: assignment.trainer_name,
                                     employee_id: assignment.employee_id,
-                                    batch_title: batch?.title || 'Unknown Batch', // Safely access batch title
-                                    batch_id: batch?.batch_id || 'unknown' // Add batch_id for unique keys
+                                    batch_title: batch?.title || 'Unknown Batch',
+                                    batch_id: batch?.batch_id || 'unknown'
                                 }
                             ];
                         })

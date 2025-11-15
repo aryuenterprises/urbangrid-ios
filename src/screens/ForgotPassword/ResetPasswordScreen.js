@@ -26,6 +26,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import GradientButton from '../../components/GradientButton/gradientButton';
 import { useFormFocusAdvanced } from '../../utils/useFormFocusAdvanced';
 import { smartPreload } from '../../utils/smartPreload';
+import { API_BASE_URL } from '@env'
 
 const ResetPasswordScreen = ({ route, navigation }) => {
     const { email } = route.params;
@@ -99,8 +100,8 @@ const ResetPasswordScreen = ({ route, navigation }) => {
             });
         } finally {
             setLoading(false);
-            smartPreload('Login')
-            navigation.navigate('Login');
+            // smartPreload('Login')
+            // navigation.navigate('Login');
         }
     };
 
@@ -186,12 +187,12 @@ const ResetPasswordScreen = ({ route, navigation }) => {
                                 <TextInput.Icon
                                     icon={({ size, color }) => (
                                         <Ionicons
-                                            name={showPassword ? "eye-off" : "eye"}
+                                            name={showConfirmPassword ? "eye-off" : "eye"}
                                             size={size}
                                             color="rgba(255,255,255,0.7)"
                                         />
                                     )}
-                                    onPress={() => setShowConfirmPassword(!showPassword)}
+                                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                                 />
                             }
                         />

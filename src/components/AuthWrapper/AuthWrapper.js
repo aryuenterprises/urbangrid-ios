@@ -42,7 +42,7 @@ const AuthWrapper = ({
           <SafeAreaView style={globalstyles.container}>
             <WrapperComponent {...wrapperProps}>
               <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={globalstyles.keyboardAvoidingView}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 10}
               >

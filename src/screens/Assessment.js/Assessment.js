@@ -12,7 +12,7 @@ import {
     Platform,
     StatusBar
 } from 'react-native';
-import { moderateScale } from '../../utils/responsive';
+import { hp, moderateScale } from '../../utils/responsive';
 import { getAssessment, getResults } from '../../services/auth';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFooterVisibility } from '../../hook/useFooterVisibility';
@@ -656,6 +656,7 @@ const styles = StyleSheet.create({
     questionsScrollView: {
         flex: 1,
         padding: moderateScale(16),
+        marginBottom: hp("5%")
         // backgroundColor: "#000"
     },
     questionContainer: {

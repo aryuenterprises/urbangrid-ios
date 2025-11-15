@@ -72,6 +72,8 @@ const NotificationScreen = ({ route, navigation }) => {
     )
 
     const handleNotificationPress = async (item) => {
+        console.log("item.test_id", item.test_id, item);
+        return
         try {
             const response = await api.post(`${API_BASE_URL}/api/notifications/mark_read`, {
                 id: item?.id
@@ -90,14 +92,14 @@ const NotificationScreen = ({ route, navigation }) => {
                         params: { itemId: item.assignment_id }
                     });
                 }
-                // else if (item?.message?.toLowerCase()?.includes("test_result")) {
-                //     store.dispatch(setGlobalCourseId(item.course_id));
-                //  smartPreload('Assessment')
-                //     navigation.navigate('Course', {
-                //         screen: 'Assessment',
-                //         params: { test_id: item.test_id, submitted: true }
-                //     });
-                // }
+                else if (item?.message?.toLowerCase()?.includes("test_result")) {
+                    store.dispatch(setGlobalCourseId(item.course_id));
+                    smartPreload('Assessment')
+                    navigation.navigate('Course', {
+                        screen: 'Assessment',
+                        params: { test_id: item.test_id, submitted: true }
+                    });
+                }
             }
         } catch (error) {
             throw error;

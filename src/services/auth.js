@@ -189,7 +189,7 @@ export const checkAuth = async () => {
 export const logout = async () => {
   try {
     smartPreload('Login');
-    resetToAuth(); // Navigate to auth screen
+    resetToAuth();
     removeAuthToken();
     store.dispatch(clearAuthData()); // Clear Redux state
     store.dispatch(clearStudentProfile()); // Clear student profile
@@ -241,10 +241,10 @@ export const attendanceService = {
 //  Student Profile
 export const getStudentProfile = async (studentId) => {
   try {
-    console.log("studentId", studentId)
     const response = await api.get(`${API_BASE_URL}/api/student_profile/${studentId}`
     );
     const profileData = response.data;
+    // console.log("profileData", response.data.data.batch)
     store.dispatch(setStudentProfile(profileData));
     return profileData;
   } catch (error) {
@@ -353,7 +353,6 @@ export const getAssessment = async (id) => {
 export const getResults = async (testId, studentId) => {
   try {
     const response = await api.get(`${API_BASE_URL}/api/test/${testId}/student/${studentId}/result`);
-    console.log("object", response.data)
     return response.data;
   } catch (error) {
     throw error;

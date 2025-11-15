@@ -1,4 +1,4 @@
-import { createNavigationContainerRef } from '@react-navigation/native';
+import { CommonActions, createNavigationContainerRef } from '@react-navigation/native';
 
 export const navigationRef = createNavigationContainerRef();
 
@@ -11,10 +11,12 @@ export function navigate(name, params) {
 
 export const resetToAuth = () => {
   if (navigationRef.isReady()) {
-    navigationRef.reset({
-      index: 0,
-      routes: [{ name: 'Auth' }],
-    });
+    navigationRef.current?.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Auth' }],
+      })
+    );
   }
 };
 
@@ -22,7 +24,7 @@ export const resetToApp = () => {
   if (navigationRef.isReady()) {
     navigationRef.reset({
       index: 0,
-      routes: [{ name: 'App' }], // Ensure 'App' is your main app stack
+      routes: [{ name: 'App' }],
     });
   }
 };

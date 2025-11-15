@@ -82,13 +82,6 @@ const StudentDashboard = () => {
   const { studentProfile, user, token } = useSelector(state => state.auth);
   const { theme, colors: themeColors, isDark, getColor } = useAppTheme(); // Use the theme hook
   const insets = useSafeAreaInsets();
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     // fetchData();
-  //     fetchNotifications();
-  //     getStudentProfile(user.student_id);
-  //   }, []));
-
   const isFocused = useIsFocused();
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -98,13 +91,13 @@ const StudentDashboard = () => {
       if (!hasMounted) {
         fetchData();
         fetchNotifications();
-        getStudentProfile(user.student_id);
+        getStudentProfile(user?.student_id);
         setHasMounted(true);
         getSettings();
       } else {
         // Subsequent focuses - only refresh notifications and settings
         fetchNotifications();
-        getStudentProfile(user.student_id);
+        getStudentProfile(user?.student_id);
         getSettings();
       }
     }
@@ -113,7 +106,7 @@ const StudentDashboard = () => {
   const onRefresh = useCallback(() => {
     fetchData();
     fetchNotifications();
-    getStudentProfile(user.student_id);
+    getStudentProfile(user?.student_id);
     getSettings();
   }, []);
 
@@ -254,7 +247,7 @@ const StudentDashboard = () => {
                       activeOffsetX: [-10, 10],
                     }}
                   />
-                  {data.announcements.length > 1 && (
+                  {/* {data.announcements.length > 1 && (
                     <View style={styles.pagination}>
                       {data.announcements.map((_, index) => (
                         <View
@@ -267,7 +260,7 @@ const StudentDashboard = () => {
                         />
                       ))}
                     </View>
-                  )}
+                  )} */}
                 </View>
               </>
             ) : (
@@ -301,45 +294,44 @@ const StudentDashboard = () => {
               </View>
             )}
 
-            {/* Quick Stats Row */}
-            <View style={styles.statsRow}>
-              <StatCard
-                icon="calendar-month"
-                value={`${data?.attendance?.percentage}%`}
-                label="Attendance"
-                color={themeColors.present}
-                background={themeColors.presetStat}
-                theme={themeColors}
-                screen={"AttendanceDetailScreen"}
-              />
-              <StatCard
-                icon="assignment-turned-in"
-                value={`${data?.assignments?.done}/${data?.assignments?.total}`}
-                label="Tasks"
-                color={themeColors.blue}
-                background={themeColors.taskStat}
-                theme={themeColors}
-                screen={"AttendanceDetailScreen"}
-              />
-              <StatCard
-                icon="trending-up"
-                value={`${data?.student_progress?.progress_percent}%`}
-                label="Progress"
-                color={themeColors.warning}
-                background={themeColors.progressStat}
-                theme={themeColors}
-                screen={"AttendanceDetailScreen"}
-              />
-            </View>
+            {user?.user_type === "student" &&
+              <View style={styles.statsRow}>
+                <StatCard
+                  icon="calendar-month"
+                  value={`${data?.attendance?.percentage}%`}
+                  label="Attendance"
+                  color={themeColors.present}
+                  background={themeColors.presetStat}
+                  theme={themeColors}
+                  screen={"AttendanceDetailScreen"}
+                />
+                <StatCard
+                  icon="assignment-turned-in"
+                  value={`${data?.assignments?.done}/${data?.assignments?.total}`}
+                  label="Tasks"
+                  color={themeColors.blue}
+                  background={themeColors.taskStat}
+                  theme={themeColors}
+                  screen={"AttendanceDetailScreen"}
+                />
+                <StatCard
+                  icon="trending-up"
+                  value={`${data?.student_progress?.progress_percent}%`}
+                  label="Progress"
+                  color={themeColors.warning}
+                  background={themeColors.progressStat}
+                  theme={themeColors}
+                  screen={"AttendanceDetailScreen"}
+                />
+              </View>}
 
-            {/* Upcoming Class Schedule */}
             {data?.upcoming_schedules?.length > 0 && (
               <View style={styles.section}>
                 <View style={globalstyles.sectionHeader}>
                   <Text style={[globalstyles.sectionTitle, { color: themeColors.textPrimary }]}>Upcoming Class</Text>
-                  <TouchableOpacity 
-                  onPressIn={() => smartPreload('Classes')}
-                  onPress={() => navigation.navigate("Classes")}>
+                  <TouchableOpacity
+                    onPressIn={() => smartPreload('Classes')}
+                    onPress={() => navigation.navigate("Classes")}>
                     <Text style={globalstyles.seeAllText}>View All</Text>
                   </TouchableOpacity>
                 </View>
@@ -354,13 +346,41 @@ const StudentDashboard = () => {
                     status={classItem.status}
                     item={classItem}
                     color={themeColors}
+                    user={user}
+                  />
+                ))}
+              </View>
+            )}
+
+            {user?.user_type === "tutor" && data?.schedule?.length > 0 && (
+              <View style={styles.section}>
+                <View style={globalstyles.sectionHeader}>
+                  <Text style={[globalstyles.sectionTitle, { color: themeColors.textPrimary }]}>Schedule Class</Text>
+                  <TouchableOpacity
+                    onPressIn={() => smartPreload('Classes')}
+                    onPress={() => navigation.navigate("Classes")}>
+                    <Text style={globalstyles.seeAllText}>View All</Text>
+                  </TouchableOpacity>
+                </View>
+                {data.schedule.slice(0, 3).map((classItem, index) => (
+                  <ClassCard
+                    key={index}
+                    course={classItem.course_name}
+                    batch={classItem.title}
+                    date={formatDate(classItem.scheduled_date)}
+                    time={classItem.duration}
+                    trainer={classItem.trainer_name}
+                    status={classItem.status}
+                    item={classItem}
+                    color={themeColors}
+                    user={user}
                   />
                 ))}
               </View>
             )}
 
             {/* Featured Courses */}
-            <View style={[styles.section, { marginBottom: hp("6%") }]}>
+            {data?.featured_courses && <View style={[styles.section, { marginBottom: hp("6%") }]}>
               <View style={globalstyles.sectionHeader}>
                 <Text style={[globalstyles.sectionTitle, { color: themeColors.textPrimary }]}>Featured Courses</Text>
               </View>
@@ -382,7 +402,7 @@ const StudentDashboard = () => {
                 )}
                 keyExtractor={(item, index) => index.toString()}
               />
-            </View>
+            </View>}
           </>
         )}
         keyExtractor={() => "dashboard"}
@@ -391,7 +411,6 @@ const StudentDashboard = () => {
   );
 };
 
-// Reusable Components (StatCard, ClassCard, CourseCard, etc.)
 const StatCard = ({ icon, value, label, color, background, screen, theme }) => {
   const [progress, setProgress] = useState(0);
 
@@ -428,7 +447,7 @@ const StatCard = ({ icon, value, label, color, background, screen, theme }) => {
   );
 };
 
-const ClassCard = ({ course, batch, date, time, trainer, status, item, color }) => {
+const ClassCard = ({ course, batch, date, time, trainer, status, item, color, user }) => {
   return (
     <View style={[globalstyles.card, { backgroundColor: color.card }]}>
       <View style={styles.classHeader}>
@@ -453,7 +472,7 @@ const ClassCard = ({ course, batch, date, time, trainer, status, item, color }) 
         <FontAwesome name="user" size={16} color={color.textSecondary} />
         <Text style={[styles.classDetailText, {
           color: color.textSecondary,
-        }]}>Trainer: {trainer}</Text>
+        }]}>{user?.user_type === "tutor" ? "Student" : "Trainer"} : {trainer}</Text>
       </View>
     </View>
   )
@@ -473,9 +492,8 @@ const CourseCard = ({ title, category, image, duration, fee, onPress, color }) =
   </TouchableOpacity>
 );
 
-// AnnouncementCard component (from your original code)
 const AnnouncementCard = ({ title, background_pic_url, created_at, content }) => {
-  const [expanded, setExpanded] = useState(false);
+  const { theme, colors: themeColors, isDark, getColor } = useAppTheme();
 
   const extractStyledContent = (html) => {
     if (!html) return { heading: null, paragraph: null };
@@ -557,7 +575,6 @@ const AnnouncementCard = ({ title, background_pic_url, created_at, content }) =>
   );
 };
 
-// Styles
 const styles = StyleSheet.create({
   skeletonContainer: {
     padding: moderateScale(16),
